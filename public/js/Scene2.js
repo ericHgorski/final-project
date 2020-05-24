@@ -9,7 +9,6 @@ class Scene2 extends Phaser.Scene {
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
         this.cursorKeys = this.input.keyboard.createCursorKeys();
-        // this.add.text(20, 20, "The game is playing...");
 
         // ============ CHICKEN FIGURE ============= //
         this.chicken = this.physics.add.image(config.width / 2, config.height / 2, "chicken");
@@ -29,8 +28,6 @@ class Scene2 extends Phaser.Scene {
             runChildUpdate: true,
         });
 
-        this.log = console.log("success");
-
         this.physics.add.overlap(this.projectiles, this.chicken, this.hitChicken, null, this);
 
         // =============== CHICKEN HEALTH ================ //
@@ -39,7 +36,7 @@ class Scene2 extends Phaser.Scene {
 
         // =============== CLOUDS ================ //
 
-        let numOfClouds = 4;
+        let numOfClouds = Phaser.Math.Between(2, 8);
         for (let i = 0; i < numOfClouds; i++) {
             let cloudY = Phaser.Math.Between(0, config.height);
             let cloudX = Phaser.Math.Between(0, config.width);
@@ -76,12 +73,15 @@ class Scene2 extends Phaser.Scene {
 
         if (this.cursorKeys.left.isDown) {
             this.chicken.setVelocityX(-gameSettings.playerSpeed);
+            this.chicken.setAngularVelocity(-gameSettings.playerSpeed / 20);
         } else if (this.cursorKeys.right.isDown) {
             this.chicken.setVelocityX(gameSettings.playerSpeed);
+            this.chicken.setAngularVelocity(gameSettings.playerSpeed / 20);
         }
         if (this.cursorKeys.down.isDown) {
             this.chicken.setVelocityY(gameSettings.playerSpeed);
         } else if (this.cursorKeys.up.isDown) {
+            // this.physics.velocityFromRotation(this.chicken.rotation + 1.5, 100, this.chicken.body.acceleration);
             this.chicken.setVelocityY(-gameSettings.playerSpeed);
         }
     }
@@ -92,13 +92,11 @@ class Scene2 extends Phaser.Scene {
     hitChicken(chicken, projectile) {
         this.health -= 1;
         this.healthLevel.text = `HEALTH : ${this.health}`;
-        // console.log("chicken was hit");
         projectile.destroy();
-        // chicken.destroy();
         if (this.health == 0) {
             this.chickenSound.play();
             chicken.disableBody(true, true);
-            this.add.text(200, 200, "GAME OVER");
+            this.healthLevel = this.add.bitmapText(500, 500, "myFont", `GAME OVER`, 200);
         }
     }
 

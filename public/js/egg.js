@@ -11,11 +11,11 @@ class Egg extends Phaser.GameObjects.Sprite {
 
         // enable physics
         scene.physics.world.enableBody(this);
-
-        // this.body.velocity.y = -250;
-
         // Add the beam to the projectiles group in scene 2
+
         scene.projectiles.add(this);
+
+        this.body.velocity.y = 250;
     }
 
     update() {
