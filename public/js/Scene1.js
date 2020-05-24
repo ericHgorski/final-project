@@ -25,6 +25,7 @@ class Scene1 extends Phaser.Scene {
         var self = this;
         function addPlayer(self, playerInfo) {
             self.chicken = self.physics.add.image(playerInfo.x, playerInfo.y, "chicken");
+            console.log("self.chicken :>> ", self.chicken);
             // console.log("playerInfo.team :>> ", playerInfo.team);
             // if (playerInfo.team === "white") {
             //     console.log("self.chicken :>> ", self.chicken);
@@ -54,6 +55,12 @@ class Scene1 extends Phaser.Scene {
             key: "egg_anim",
             frames: this.anims.generateFrameNumbers("egg"),
             frameRate: 3,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "clouds",
+            frames: this.anims.generateFrameNumbers("clouds"),
+            frameRate: 1,
             repeat: -1,
         });
 

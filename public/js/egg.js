@@ -15,11 +15,10 @@ class Egg extends Phaser.GameObjects.Sprite {
 
         scene.projectiles.add(this);
 
-        this.body.velocity.y = 250;
+        this.body.velocity.y = 200;
     }
 
     update() {
-        // 3.4 Frustum culling
         if (this.y > config.height - 60) {
             this.destroy();
         }
