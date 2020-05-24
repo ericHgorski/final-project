@@ -24,14 +24,14 @@ class Scene1 extends Phaser.Scene {
         // The add player helper function
         var self = this;
         function addPlayer(self, playerInfo) {
-            self.chicken = self.physics.add.image(playerInfo.x, playerInfo.y, "chicken").setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-            console.log("playerInfo.team :>> ", playerInfo.team);
-            if (playerInfo.team === "white") {
-                console.log("self.chicken :>> ", self.chicken);
-                self.chicken.setTint(0x0000ff, { tintFill: true });
-            } else {
-                self.chicken.setTint(0xff0000, { tintFill: true });
-            }
+            self.chicken = self.physics.add.image(playerInfo.x, playerInfo.y, "chicken");
+            // console.log("playerInfo.team :>> ", playerInfo.team);
+            // if (playerInfo.team === "white") {
+            //     console.log("self.chicken :>> ", self.chicken);
+            //     self.chicken.setTint(0x0000ff, { tintFill: true });
+            // } else {
+            //     self.chicken.setTint(0xff0000, { tintFill: true });
+            // }
         }
 
         // Get connection info when user connects or disconnects.
