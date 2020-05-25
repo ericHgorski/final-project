@@ -1,7 +1,7 @@
 class Egg extends Phaser.GameObjects.Sprite {
     constructor(scene) {
-        var x = scene.chicken.x;
-        var y = scene.chicken.y + 85;
+        var x = scene.body.x;
+        var y = scene.body.y + 200;
 
         super(scene, x, y, "egg");
 
@@ -10,9 +10,9 @@ class Egg extends Phaser.GameObjects.Sprite {
         this.play("egg_anim");
 
         // enable physics
-        scene.physics.world.enableBody(this);
-        // Add the beam to the projectiles group in scene 2
+        scene.physics.world.enableBody(this, 0);
 
+        // Add the beam to the projectiles group in scene 2
         scene.projectiles.add(this);
 
         this.body.velocity.y = 200;
