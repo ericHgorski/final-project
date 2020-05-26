@@ -21,5 +21,5 @@ var gameSettings = {
     playerSpeed: 500,
     projectileSpeed: 1000,
     characterOffset: 60,
-    startingHealth: 10,
+    startingHealth: 100,
 };
