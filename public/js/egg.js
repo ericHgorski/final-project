@@ -1,7 +1,7 @@
 class Egg extends Phaser.GameObjects.Sprite {
     constructor(scene) {
         var x = scene.chicken.x;
-        var y = scene.chicken.y + 85;
+        var y = scene.chicken.y + 100;
 
         super(scene, x, y, "egg");
 

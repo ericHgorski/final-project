@@ -11,10 +11,24 @@ class Scene2 extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
         // ============ CHICKEN FIGURE ============= //
-        this.chicken = this.physics.add.image(config.width / 2, config.height / 2, "chicken");
-        this.chicken.setScale(0.3);
-        this.chicken.setCollideWorldBounds(true);
-        // this.chicken.setInteractive();
+        this.chicken = this.physics.add
+            .image(config.width / 2, config.height / 2, "chicken")
+            .setScale(0.35)
+            .setCollideWorldBounds(true);
+
+        // Get connection info when user connects or disconnects.
+        this.socket = io();
+
+        let enemyChickenCreated = false;
+        this.socket.on("otherChickenPosition", (position) => {
+            if (!enemyChickenCreated) {
+                this.enemyChicken = this.physics.add.image(position.x, position.y, "chicken").setScale(0.35).setCollideWorldBounds(true);
+                this.physics.add.overlap(this.projectiles, this.enemyChicken, this.hitEnemyChicken, null, this);
+                enemyChickenCreated = true;
+            } else {
+                this.enemyChicken.setX(position.x).setY(position.y).setAngle(position.angle);
+            }
+        });
 
         // =============== SOUND ================ //
         this.chickenSound = this.sound.add("chicken_audio");
@@ -28,12 +42,23 @@ class Scene2 extends Phaser.Scene {
             runChildUpdate: true,
         });
 
+        this.socket.on("eggWasDropped", (coordinates) => {
+            let egg = new Egg(this);
+            egg.setX(coordinates.x).setY(coordinates.y);
+        });
+
         this.physics.add.overlap(this.projectiles, this.chicken, this.hitChicken, null, this);
 
-        // =============== CHICKEN HEALTH ================ //
+        // =============== CHICKEN AND ENEMY CHICKEN HEALTH ================ //
         this.health = 5;
-        this.healthLevel = this.add.bitmapText(15, 10, "myFont", `HEALTH: ${this.health}`, 40);
-        this.healthLevel.tint = 0x223344;
+        this.healthLevel = this.add.bitmapText(15, 10, "myFont", `MY HEALTH: ${this.health}`, 40);
+        this.healthLevel.setDepth(10);
+        this.healthLevel.tint = 0x993244;
+        this.enemyHealth = 5;
+        this.enemyHealthLevel = this.add.bitmapText(config.width - 300, 10, "myFont", `ENEMY HEALTH: ${this.enemyHealth}`, 40);
+        this.enemyHealthLevel.tint = 0x223344;
+        // Bring health level to foreground of all images
+        this.enemyHealthLevel.setDepth(10);
 
         // =============== CLOUDS ================ //
 
@@ -44,8 +69,6 @@ class Scene2 extends Phaser.Scene {
             this.clouds = this.add.sprite(cloudX, cloudY, "clouds");
             this.clouds.play("clouds");
         }
-        this.physics.add.collider(this.projectiles, this.clouds);
-        console.log("this.clouds :>> ", this.clouds);
     }
 
     update() {
@@ -64,6 +87,8 @@ class Scene2 extends Phaser.Scene {
         }
     }
     movePlayerHandler() {
+        // emit
+
         this.chicken.setVelocity(0);
         // When chicken is closer to top of the game screen, make it move slower.
         let velocityMultiplier = config.height / this.chicken.y;
@@ -80,27 +105,40 @@ class Scene2 extends Phaser.Scene {
         if (this.cursorKeys.down.isDown) {
             this.chicken.setVelocityY(gameSettings.playerSpeed);
         } else if (this.cursorKeys.up.isDown) {
-            // this.physics.velocityFromRotation(this.chicken.rotation + 1.5, 100, this.chicken.body.acceleration);
             this.chicken.setVelocityY(-gameSettings.playerSpeed / velocityMultiplier);
         }
+        this.socket.emit("chickenPosition", { x: this.chicken.x, y: this.chicken.y, angle: this.chicken.angle });
     }
     moveClouds() {
         this.clouds.y += Phaser.Math.Between(1, 3);
     }
+    hitEnemyChicken(enemyChicken, projectile) {
+        this.enemyHealth -= 1;
+        this.socket.emit("enemyHealthChange", this.enemyHealth);
+        this.enemyHealthLevel.text = `ENEMY HEALTH : ${this.enemyHealth}`;
+        projectile.destroy();
+        if (this.enemyHealth == 0) {
+            this.chickenSound.play();
+            enemyChicken.disableBody(true, true);
+            this.add.bitmapText(500, 500, "myFont", `YOU WIN`, 200);
+        }
+    }
 
     hitChicken(chicken, projectile) {
         this.health -= 1;
-        this.healthLevel.text = `HEALTH : ${this.health}`;
+        this.socket.emit("healthChange", this.health);
+        this.healthLevel.text = `MY HEALTH : ${this.health}`;
         projectile.destroy();
         if (this.health == 0) {
             this.chickenSound.play();
             chicken.disableBody(true, true);
-            this.healthLevel = this.add.bitmapText(500, 500, "myFont", `GAME OVER`, 200);
+            this.add.bitmapText(500, 500, "myFont", `YOU LOSE`, 200);
         }
     }
 
     shootEgg() {
         var egg = new Egg(this);
+        this.socket.emit("eggDropCoordinates", { x: egg.x, y: egg.y });
     }
 
     resetCloud() {
@@ -108,3 +146,31 @@ class Scene2 extends Phaser.Scene {
         this.clouds.x = Phaser.Math.Between(0, config.width);
     }
 }
+
+// On current players event
+// this.socket.on("currentPlayers", function (players) {
+//     console.log("players : >> ", players);
+//     Object.keys(players).forEach(function (id) {
+//         console.log("players[id] :>> ", players[id]);
+//         console.log("self.socket.id :>> ", self.socket.id);
+//         if (players[id].playerId == self.socket.id) {
+//             console.log("player is added with player id: ", players[id]);
+//             console.log("player is added with socket id: ", self.socket.id);
+//             addPlayer(self, players[id]);
+//         }
+//     });
+// });
+
+// function addPlayer(self, playerInfo) {
+//     console.log("add player function is running");
+//     self.chicken2 = self.physics.add.image(200, 200, "chicken").setScale(0.3).setCollideWorldBounds(true);
+// self.chicken.setScale(0.3);
+// self.chicken.setCollideWorldBounds(true);
+// console.log("self.chicken :>> ", self.chicken);
+// console.log("playerInfo.team :>> ", playerInfo.team);
+// if (playerInfo.team === "white") {
+//     console.log("self.chicken :>> ", self.chicken);
+//     self.chicken.setTint(0x0000ff, { tintFill: true });
+// } else {
+//     self.chicken.setTint(0xff0000, { tintFill: true });
+// }

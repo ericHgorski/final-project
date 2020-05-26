@@ -22,34 +22,35 @@ class Scene1 extends Phaser.Scene {
     create() {
         this.add.text(20, 20, "Loading game...");
         // The add player helper function
-        var self = this;
-        function addPlayer(self, playerInfo) {
-            self.chicken = self.physics.add.image(playerInfo.x, playerInfo.y, "chicken");
-            console.log("self.chicken :>> ", self.chicken);
-            // console.log("playerInfo.team :>> ", playerInfo.team);
-            // if (playerInfo.team === "white") {
-            //     console.log("self.chicken :>> ", self.chicken);
-            //     self.chicken.setTint(0x0000ff, { tintFill: true });
-            // } else {
-            //     self.chicken.setTint(0xff0000, { tintFill: true });
-            // }
-        }
+        // var self = this;
+        // function addPlayer(self, playerInfo) {
+        //     console.log("add player function is running");
+        //     self.chicken = self.physics.add.image(200, 200, "chicken");
+        //     console.log("self.chicken :>> ", self.chicken);
+        //     // console.log("playerInfo.team :>> ", playerInfo.team);
+        //     // if (playerInfo.team === "white") {
+        //     //     console.log("self.chicken :>> ", self.chicken);
+        //     //     self.chicken.setTint(0x0000ff, { tintFill: true });
+        //     // } else {
+        //     //     self.chicken.setTint(0xff0000, { tintFill: true });
+        //     // }
+        // }
 
-        // Get connection info when user connects or disconnects.
-        this.socket = io();
-        // On current players event
-        this.socket.on("currentPlayers", function (players) {
-            console.log("players :>> ", players);
-            Object.keys(players).forEach(function (id) {
-                console.log("players[id] :>> ", players[id]);
-                console.log("self.socket.id :>> ", self.socket.id);
-                if (players[id].playerId == self.socket.id) {
-                    console.log("player is added with player id: ", players[id]);
-                    console.log("player is added with socket id: ", self.socket.id);
-                    addPlayer(self, players[id]);
-                }
-            });
-        });
+        // // Get connection info when user connects or disconnects.
+        // this.socket = io();
+        // // On current players event
+        // this.socket.on("currentPlayers", function (players) {
+        //     console.log("players :>> ", players);
+        //     Object.keys(players).forEach(function (id) {
+        //         console.log("players[id] :>> ", players[id]);
+        //         console.log("self.socket.id :>> ", self.socket.id);
+        //         if (players[id].playerId == self.socket.id) {
+        //             console.log("player is added with player id: ", players[id]);
+        //             console.log("player is added with socket id: ", self.socket.id);
+        //             addPlayer(self, players[id]);
+        //         }
+        //     });
+        // });
 
         this.anims.create({
             key: "egg_anim",
