@@ -1,1 +1,1 @@
-web: node public/js/game.js
+web: node index.js
