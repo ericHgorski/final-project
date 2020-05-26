@@ -1,0 +1,13 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+#game-header {
+    padding: 30px;
+}
+canvas {
+    border-radius: 2%;
+}

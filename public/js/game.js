@@ -3,14 +3,14 @@ const config = {
     type: Phaser.AUTO,
     // Render our game in canvas element of this id if exists, if not create a canvas element
     parent: "funky-chicken-destroyer",
-    width: 1762,
-    height: 1164,
+    width: 1280,
+    height: 800,
+    parent: game,
     scene: [Scene1, Scene2],
     physics: {
         default: "arcade",
         arcade: {
             debug: false,
-            gravity: { y: 0 },
         },
     },
 };
@@ -20,4 +20,6 @@ var game = new Phaser.Game(config);
 var gameSettings = {
     playerSpeed: 500,
     projectileSpeed: 1000,
+    characterOffset: 60,
+    startingHealth: 10,
 };

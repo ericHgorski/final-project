@@ -6,10 +6,12 @@ class Scene1 extends Phaser.Scene {
     preload() {
         this.load.image("background", "../assets/sky.png");
         this.load.image("chicken", "../assets/funky-chicken.png");
+        this.load.image("enemyChicken", "../assets/funky-chicken-enemy.png");
         this.load.spritesheet("egg", "../assets/egg.png", {
-            frameHeight: 40,
-            frameWidth: 40,
+            frameHeight: 20,
+            frameWidth: 20,
         });
+
         this.load.spritesheet("clouds", "../assets/clouds.png", {
             frameHeight: 195,
             frameWidth: 350,

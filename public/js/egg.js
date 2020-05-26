@@ -4,18 +4,18 @@ class Egg extends Phaser.GameObjects.Sprite {
 
         if (direction == "down") {
             x = scene.chicken.x;
-            y = scene.chicken.y + 100;
+            y = scene.chicken.y + gameSettings.characterOffset;
         }
         if (direction == "right") {
-            x = scene.chicken.x + 100;
+            x = scene.chicken.x + gameSettings.characterOffset;
             y = scene.chicken.y;
         }
         if (direction == "up") {
             x = scene.chicken.x;
-            y = scene.chicken.y - 100;
+            y = scene.chicken.y - gameSettings.characterOffset;
         }
         if (direction == "left") {
-            x = scene.chicken.x - 100;
+            x = scene.chicken.x - gameSettings.characterOffset;
             y = scene.chicken.y;
         }
         // Add the egg to the scene

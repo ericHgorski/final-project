@@ -13,7 +13,7 @@ class Scene2 extends Phaser.Scene {
         // ============ CHICKEN FIGURE ============= //
         this.chicken = this.physics.add
             .image(config.width / 2, config.height / 2, "chicken")
-            .setScale(0.35)
+            .setScale(0.2)
             .setCollideWorldBounds(true);
 
         // Get connection info when user connects or disconnects.
@@ -22,7 +22,7 @@ class Scene2 extends Phaser.Scene {
         let enemyChickenCreated = false;
         this.socket.on("otherChickenPosition", (position) => {
             if (!enemyChickenCreated) {
-                this.enemyChicken = this.physics.add.image(position.x, position.y, "chicken").setScale(0.35).setCollideWorldBounds(true);
+                this.enemyChicken = this.physics.add.image(position.x, position.y, "enemyChicken").setScale(0.2).setCollideWorldBounds(true);
                 this.physics.add.overlap(this.projectiles, this.enemyChicken, this.hitEnemyChicken, null, this);
                 enemyChickenCreated = true;
             } else {
@@ -48,19 +48,19 @@ class Scene2 extends Phaser.Scene {
         this.socket.on("eggWasDropped", (coordinates) => {
             let egg = new Egg(this);
             if (coordinates.direction == "down") {
-                egg.setX(coordinates.x).setY(coordinates.y + 100);
+                egg.setX(coordinates.x).setY(coordinates.y + gameSettings.characterOffset);
                 egg.body.velocity.y = gameSettings.projectileSpeed;
             }
             if (coordinates.direction == "right") {
-                egg.setX(coordinates.x + 100).setY(coordinates.y);
+                egg.setX(coordinates.x + gameSettings.characterOffset).setY(coordinates.y);
                 egg.body.velocity.x = gameSettings.projectileSpeed;
             }
             if (coordinates.direction == "up") {
-                egg.setX(coordinates.x).setY(coordinates.y - 100);
+                egg.setX(coordinates.x).setY(coordinates.y - gameSettings.characterOffset);
                 egg.body.velocity.y = -gameSettings.projectileSpeed;
             }
             if (coordinates.direction == "left") {
-                egg.setX(coordinates.x - 100).setY(coordinates.y);
+                egg.setX(coordinates.x - gameSettings.characterOffset).setY(coordinates.y);
                 egg.body.velocity.x = -gameSettings.projectileSpeed;
             }
         });
@@ -68,14 +68,13 @@ class Scene2 extends Phaser.Scene {
         this.physics.add.overlap(this.projectiles, this.chicken, this.hitChicken, null, this);
 
         // =============== CHICKEN AND ENEMY CHICKEN HEALTH ================ //
-        this.health = 5;
-        this.healthLevel = this.add.bitmapText(15, 10, "myFont", `MY HEALTH: ${this.health}`, 40);
+        this.health = gameSettings.startingHealth;
+        this.healthLevel = this.add.bitmapText(15, 10, "myFont", `MY HEALTH: ${this.health}`, 30);
         this.healthLevel.setDepth(10);
         this.healthLevel.tint = 0x993244;
-        this.enemyHealth = 5;
-        this.enemyHealthLevel = this.add.bitmapText(config.width - 300, 10, "myFont", `ENEMY HEALTH: ${this.enemyHealth}`, 40);
+        this.enemyHealth = gameSettings.startingHealth;
+        this.enemyHealthLevel = this.add.bitmapText(config.width - 220, 10, "myFont", `ENEMY HEALTH: ${this.enemyHealth}`, 30);
         this.enemyHealthLevel.tint = 0x223344;
-        // Bring health level to foreground of all images
         this.enemyHealthLevel.setDepth(10);
 
         // =============== CLOUDS ================ //
@@ -85,6 +84,7 @@ class Scene2 extends Phaser.Scene {
             let cloudY = Phaser.Math.Between(0, config.height);
             let cloudX = Phaser.Math.Between(0, config.width);
             this.clouds = this.add.sprite(cloudX, cloudY, "clouds");
+            this.clouds.setScale(0.5);
             this.clouds.play("clouds");
         }
     }
@@ -178,31 +178,3 @@ class Scene2 extends Phaser.Scene {
         this.clouds.x = Phaser.Math.Between(0, config.width);
     }
 }
-
-// On current players event
-// this.socket.on("currentPlayers", function (players) {
-//     console.log("players : >> ", players);
-//     Object.keys(players).forEach(function (id) {
-//         console.log("players[id] :>> ", players[id]);
-//         console.log("self.socket.id :>> ", self.socket.id);
-//         if (players[id].playerId == self.socket.id) {
-//             console.log("player is added with player id: ", players[id]);
-//             console.log("player is added with socket id: ", self.socket.id);
-//             addPlayer(self, players[id]);
-//         }
-//     });
-// });
-
-// function addPlayer(self, playerInfo) {
-//     console.log("add player function is running");
-//     self.chicken2 = self.physics.add.image(200, 200, "chicken").setScale(0.3).setCollideWorldBounds(true);
-// self.chicken.setScale(0.3);
-// self.chicken.setCollideWorldBounds(true);
-// console.log("self.chicken :>> ", self.chicken);
-// console.log("playerInfo.team :>> ", playerInfo.team);
-// if (playerInfo.team === "white") {
-//     console.log("self.chicken :>> ", self.chicken);
-//     self.chicken.setTint(0x0000ff, { tintFill: true });
-// } else {
-//     self.chicken.setTint(0xff0000, { tintFill: true });
-// }
