@@ -19,4 +19,5 @@ var game = new Phaser.Game(config);
 
 var gameSettings = {
     playerSpeed: 500,
+    projectileSpeed: 1000,
 };
