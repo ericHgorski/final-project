@@ -18,7 +18,7 @@ var game = new Phaser.Game(config);
 
 const gameSettings = {
     playerSpeed: 500,
-    projectileSpeed: 1000,
+    projectileSpeed: 550,
     characterOffset: 60,
     startingHealth: 10,
 };
