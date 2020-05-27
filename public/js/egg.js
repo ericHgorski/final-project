@@ -18,14 +18,13 @@ class Egg extends Phaser.GameObjects.Sprite {
             x = scene.chicken.x - gameSettings.characterOffset;
             y = scene.chicken.y;
         }
-        // Add the egg to the scene
-
+        // Add the egg to the scene.
         super(scene, x, y, "egg");
 
-        // Enable physics for collision detection
+        // Enable physics for collision detection.
         scene.physics.world.enableBody(this);
-        // Add the beam to the projectiles group in scene 2
 
+        // Add the beam to the projectiles group in scene 2.
         scene.add.existing(this);
         this.play("egg_anim");
 

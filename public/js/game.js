@@ -1,11 +1,10 @@
 const config = {
-    // Choose between Canvas or WebGL renderer depending on user browser, where WebGL is preferred
+    // Choose between Canvas or WebGL renderer depending on user browser, where WebGL is preferred.
     type: Phaser.AUTO,
-    // Render our game in canvas element of this id if exists, if not create a canvas element
+    // Render our game in canvas element of this id if exists, if not create a canvas element.
     parent: "funky-chicken-destroyer",
     width: 1280,
     height: 800,
-    parent: game,
     scene: [Scene1, Scene2],
     physics: {
         default: "arcade",
@@ -17,9 +16,9 @@ const config = {
 
 var game = new Phaser.Game(config);
 
-var gameSettings = {
+const gameSettings = {
     playerSpeed: 500,
     projectileSpeed: 1000,
     characterOffset: 60,
-    startingHealth: 100,
+    startingHealth: 10,
 };

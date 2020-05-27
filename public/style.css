@@ -6,8 +6,43 @@ body {
     background-color: black;
 }
 #game-header {
-    padding: 30px;
+    padding: 10px;
+}
+
+#arcade-background {
+    width: 80%;
+    height: 90%;
 }
 canvas {
-    border-radius: 2%;
+    border-radius: 1%;
+    position: absolute;
+    top: 9%;
+    height: 65%;
+    width: 50%;
+}
+#arrow-keys {
+    position: absolute;
+    bottom: 18%;
+    width: 200px;
+    left: 25%;
+}
+
+#wsad-keys {
+    bottom: 18%;
+    right: 25%;
+    width: 200px;
+    position: absolute;
+}
+#play-again {
+    position: absolute;
+    bottom: 8%;
+    font-size: 60px;
+    background-color: black;
+    color: red;
+    border: black 2px solid;
+}
+
+#play-again:hover {
+    color: white;
+    cursor: pointer;
 }

@@ -25,9 +25,9 @@ io.on("connection", function (socket) {
         socket.broadcast.emit("enemyHealthLevel", health);
     });
 
-    socket.on("disconnect", function () {
-        delete io.emit("disconnect", socket.id);
-        console.log("user disconnected");
+    socket.on("disconnect", () => {
+        socket.broadcast.emit("enemyDisconnected");
+        console.log("enemy has disconnected");
     });
 });
 

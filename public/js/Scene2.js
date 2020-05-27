@@ -10,41 +10,46 @@ class Scene2 extends Phaser.Scene {
         this.background.setScrollFactor(0);
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-        // ============ CHICKEN FIGURE ============= //
-        this.chicken = this.physics.add
-            .image(config.width / 2, config.height / 2, "chicken")
-            .setScale(0.2)
-            .setCollideWorldBounds(true);
+        // =============== SOUND ================ //
+        this.chickenSound = this.sound.add("chicken_audio");
+        this.newChickenEntered = this.sound.add("new_chicken");
+        this.splat = this.sound.add("splat");
 
-        // Get connection info when user connects or disconnects.
+        // ============ PLAYER 1 ============= //
+        this.chicken = this.physics.add.image(200, 200, "chicken").setScale(0.2).setCollideWorldBounds(true);
+
+        // ========== PLAYER 2 FUNCTIONALITY ============= //
         this.socket = io();
 
         let enemyChickenCreated = false;
         this.socket.on("otherChickenPosition", (position) => {
             if (!enemyChickenCreated) {
-                this.enemyChicken = this.physics.add.image(position.x, position.y, "enemyChicken").setScale(0.2).setCollideWorldBounds(true);
+                this.enemyChicken = this.physics.add.image(this.chicken.x, this.chicken.y, "enemyChicken").setScale(0.2).setCollideWorldBounds(true);
                 this.physics.add.overlap(this.projectiles, this.enemyChicken, this.hitEnemyChicken, null, this);
+                // this.newChickenEntered.play();
                 enemyChickenCreated = true;
             } else {
                 this.enemyChicken.setX(position.x).setY(position.y).setAngle(position.angle);
             }
         });
-
-        // =============== SOUND ================ //
-        this.chickenSound = this.sound.add("chicken_audio");
+        // this.socket.on("enemyDisconnected", () => {
+        //     this.enemyChicken.disableBody(true, true);
+        // });
 
         // =============== EGGS ================ //
+        // Keyboard input settings for egg shooting.
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        // Group to hold all projectiles
+        // Group to hold all egg projectiles.
         this.projectiles = this.physics.add.group({
             classType: "egg",
-            maxSize: 10,
+            maxSize: 20,
             runChildUpdate: true,
         });
 
+        // When one player shoots egg, send information to server.
         this.socket.on("eggWasDropped", (coordinates) => {
             let egg = new Egg(this);
             if (coordinates.direction == "down") {
@@ -65,19 +70,21 @@ class Scene2 extends Phaser.Scene {
             }
         });
 
+        // Add checker for chicken/egg collisions.
         this.physics.add.overlap(this.projectiles, this.chicken, this.hitChicken, null, this);
 
         // =============== CHICKEN AND ENEMY CHICKEN HEALTH ================ //
         this.health = gameSettings.startingHealth;
         this.healthLevel = this.add.bitmapText(15, 10, "myFont", `MY HEALTH: ${this.health}`, 30);
-        this.healthLevel.setDepth(10);
         this.healthLevel.tint = 0x993244;
+        this.healthLevel.setDepth(10);
+
         this.enemyHealth = gameSettings.startingHealth;
         this.enemyHealthLevel = this.add.bitmapText(config.width - 220, 10, "myFont", `ENEMY HEALTH: ${this.enemyHealth}`, 30);
         this.enemyHealthLevel.tint = 0x223344;
         this.enemyHealthLevel.setDepth(10);
 
-        // =============== CLOUDS ================ //
+        // ===================== CLOUDS ====================== //
 
         let numOfClouds = Phaser.Math.Between(2, 8);
         for (let i = 0; i < numOfClouds; i++) {
@@ -97,7 +104,7 @@ class Scene2 extends Phaser.Scene {
         if (this.clouds.y > config.height) {
             this.resetCloud();
         }
-        // Drop an egg on spacebar down if chicken is active and 3 or less eggs are on screen for given chicken
+        // Drop an egg on in given direction with maximum of 5 eggs in projectile group
         if (Phaser.Input.Keyboard.JustDown(this.wKey)) {
             if (this.chicken.active && this.projectiles.getChildren().length < 5) {
                 this.shootEgg("up");
@@ -121,42 +128,50 @@ class Scene2 extends Phaser.Scene {
     }
     movePlayerHandler() {
         this.chicken.setVelocity(0);
+
         // When chicken is closer to top of the game screen, make it move slower.
         let velocityMultiplier = config.height / this.chicken.y;
+        let playerVelocity = gameSettings.playerSpeed / velocityMultiplier;
 
+        // Left arrow key.
         if (this.cursorKeys.left.isDown) {
-            this.chicken.setVelocityX(-gameSettings.playerSpeed / velocityMultiplier);
+            this.chicken.setVelocityX(-playerVelocity);
             this.chicken.setAngularVelocity(-10);
             this.chicken.flipX = false;
+            // Right arrow key.
         } else if (this.cursorKeys.right.isDown) {
-            this.chicken.setVelocityX(gameSettings.playerSpeed / velocityMultiplier);
+            this.chicken.setVelocityX(playerVelocity);
             this.chicken.setAngularVelocity(10);
             this.chicken.flipX = true;
         }
+        // Down arrow key.
         if (this.cursorKeys.down.isDown) {
-            this.chicken.setVelocityY(gameSettings.playerSpeed);
+            this.chicken.setVelocityY(playerVelocity * velocityMultiplier);
+            // Up arrow key.
         } else if (this.cursorKeys.up.isDown) {
-            this.chicken.setVelocityY(-gameSettings.playerSpeed / velocityMultiplier);
+            this.chicken.setVelocityY(-playerVelocity);
         }
-        this.socket.emit("chickenPosition", { x: this.chicken.x, y: this.chicken.y, angle: this.chicken.angle });
+        this.socket.emit("chickenPosition", { x: this.chicken.x, y: this.chicken.y, angle: this.chicken.angle, flipX: this.chicken.flipX });
     }
     moveClouds() {
-        this.clouds.y += Phaser.Math.Between(1, 3);
+        this.clouds.y += Phaser.Math.Between(1, 4);
     }
+
+    // Handling egg collision with chickens.
     hitEnemyChicken(enemyChicken, projectile) {
         this.enemyHealth -= 1;
         this.socket.emit("enemyHealthChange", this.enemyHealth);
         this.enemyHealthLevel.text = `ENEMY HEALTH : ${this.enemyHealth}`;
         projectile.destroy();
+        this.splat.play();
         if (this.enemyHealth == 0) {
             this.chickenSound.play();
             enemyChicken.disableBody(true, true);
-            this.add.bitmapText(500, 500, "myFont", `YOU WIN`, 200);
+            this.add.bitmapText(config.width / 2 - 150, config.height / 2, "myFont", `YOU WIN`, 100);
         }
     }
 
     hitChicken(chicken, projectile) {
-        console.log("hitChicken runs");
         this.health -= 1;
         this.socket.emit("healthChange", this.health);
         this.healthLevel.text = `MY HEALTH : ${this.health}`;
@@ -164,7 +179,7 @@ class Scene2 extends Phaser.Scene {
         if (this.health == 0) {
             this.chickenSound.play();
             chicken.disableBody(true, true);
-            this.add.bitmapText(500, 500, "myFont", `YOU LOSE`, 200);
+            this.add.bitmapText(config.width / 2 - 150, config.height / 2, "myFont", `YOU LOSE`, 100);
         }
     }
 
