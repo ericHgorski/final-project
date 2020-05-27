@@ -36,6 +36,7 @@ canvas {
 #play-again {
     position: absolute;
     bottom: 8%;
+    font-family: fantasy;
     font-size: 60px;
     background-color: black;
     color: red;

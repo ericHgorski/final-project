@@ -26,15 +26,11 @@ class Scene2 extends Phaser.Scene {
             if (!enemyChickenCreated) {
                 this.enemyChicken = this.physics.add.image(this.chicken.x, this.chicken.y, "enemyChicken").setScale(0.2).setCollideWorldBounds(true);
                 this.physics.add.overlap(this.projectiles, this.enemyChicken, this.hitEnemyChicken, null, this);
-                // this.newChickenEntered.play();
                 enemyChickenCreated = true;
             } else {
                 this.enemyChicken.setX(position.x).setY(position.y).setAngle(position.angle);
             }
         });
-        // this.socket.on("enemyDisconnected", () => {
-        //     this.enemyChicken.disableBody(true, true);
-        // });
 
         // =============== EGGS ================ //
         // Keyboard input settings for egg shooting.

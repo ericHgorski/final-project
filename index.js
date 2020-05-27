@@ -26,8 +26,7 @@ io.on("connection", function (socket) {
     });
 
     socket.on("disconnect", () => {
-        socket.broadcast.emit("enemyDisconnected");
-        console.log("enemy has disconnected");
+        console.log("A player has disconnected");
     });
 });
 
