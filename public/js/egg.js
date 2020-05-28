@@ -45,7 +45,7 @@ class Egg extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        if (this.y > config.height - 60 || this.y < 60 || this.x > config.width - 60 || this.x < 60) {
+        if (this.y > config.height || this.y < 0 || this.x > config.width || this.x < 0) {
             this.destroy();
         }
     }

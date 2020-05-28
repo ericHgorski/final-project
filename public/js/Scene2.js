@@ -147,7 +147,7 @@ class Scene2 extends Phaser.Scene {
         } else if (this.cursorKeys.up.isDown) {
             this.chicken.setVelocityY(-playerVelocity);
         }
-        this.socket.emit("chickenPosition", { x: this.chicken.x, y: this.chicken.y, angle: this.chicken.angle, flipX: this.chicken.flipX });
+        this.socket.emit("chickenPosition", { x: this.chicken.x, y: this.chicken.y, angle: this.chicken.angle });
     }
     moveClouds() {
         this.clouds.y += Phaser.Math.Between(1, 4);
