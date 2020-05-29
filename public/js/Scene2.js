@@ -21,8 +21,6 @@ class Scene2 extends Phaser.Scene {
             .setScale(0.2)
             .setCollideWorldBounds(true);
 
-        // this.physics.arcade.world.setFPS(60);
-
         // ========== PLAYER 2 FUNCTIONALITY ============= //
         this.socket = io();
 
@@ -41,10 +39,6 @@ class Scene2 extends Phaser.Scene {
             console.log("player disconnected");
             // this.enemyChicken.disableBody(true, true);
         });
-
-        // this.socket.on("playerReconnected", () => {
-        //     this.enemyChicken.enableBody(true, true);
-        // });
 
         // =============== EGGS ================ //
         // Keyboard input settings for egg shooting.
