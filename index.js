@@ -21,15 +21,15 @@ io.on("connection", function (socket) {
     socket.on("healthChange", (health) => {
         socket.broadcast.emit("healthLevel", health);
     });
-    socket.on("enemyHealthChange", (health) => {
-        socket.broadcast.emit("enemyHealthLevel", health);
+    socket.on("enemyHealthChange", (enemyHealth) => {
+        socket.broadcast.emit("enemyHealthLevel", enemyHealth);
     });
 
     socket.on("disconnect", () => {
-        console.log("A player has disconnected");
+        socket.broadcast.emit("playerDisconnected");
     });
 });
 
-server.listen(process.env.PORT || 8080, function () {
+server.listen(process.env.PORT || 8080, () => {
     console.log(`Listening on ${server.address().port}`);
 });

@@ -16,7 +16,10 @@ class Scene2 extends Phaser.Scene {
         this.splat = this.sound.add("splat");
 
         // ============ PLAYER 1 ============= //
-        this.chicken = this.physics.add.image(200, 200, "chicken").setScale(0.2).setCollideWorldBounds(true);
+        this.chicken = this.physics.add
+            .image(config.width / 2, config.height / 2, "chicken")
+            .setScale(0.2)
+            .setCollideWorldBounds(true);
 
         // ========== PLAYER 2 FUNCTIONALITY ============= //
         this.socket = io();
@@ -31,6 +34,15 @@ class Scene2 extends Phaser.Scene {
                 this.enemyChicken.setX(position.x).setY(position.y).setAngle(position.angle);
             }
         });
+
+        this.socket.on("playerDisconnected", () => {
+            console.log("player disconnected");
+            // this.enemyChicken.disableBody(true, true);
+        });
+
+        // this.socket.on("playerReconnected", () => {
+        //     this.enemyChicken.enableBody(true, true);
+        // });
 
         // =============== EGGS ================ //
         // Keyboard input settings for egg shooting.

@@ -41,9 +41,10 @@ canvas {
     background-color: black;
     color: red;
     border: black 2px solid;
+    padding: 20px;
 }
 
 #play-again:hover {
-    color: white;
+    border: red 4px solid;
     cursor: pointer;
 }
