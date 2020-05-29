@@ -21,6 +21,8 @@ class Scene2 extends Phaser.Scene {
             .setScale(0.2)
             .setCollideWorldBounds(true);
 
+        // this.physics.arcade.world.setFPS(60);
+
         // ========== PLAYER 2 FUNCTIONALITY ============= //
         this.socket = io();
 
