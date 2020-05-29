@@ -12,10 +12,6 @@ const config = {
             debug: false,
         },
     },
-    fps: {
-        target: 24,
-        forceSetTimeOut: true,
-    },
 };
 
 var game = new Phaser.Game(config);
